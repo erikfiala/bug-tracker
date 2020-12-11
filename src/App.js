@@ -9,9 +9,9 @@ function App() {
 	const [email, setEmail] = useState("")
 	const [twitterUsername, setTwitterUsername] = useState("")
 	const [company, setCompany] = useState("")
-	const [status, setStatus] = useState(Boolean)
+	const [status, setStatus] = useState(false)
 	const [userInput, setUserInput] = useState("")
-	const [error, setError] = useState(null)
+	const [error, setError] = useState(undefined)
 
 	useEffect(() => {
 		fetch("https://api.github.com/users/example")
@@ -43,13 +43,15 @@ function App() {
 		setUserInput(e.target.value)
 	}
 
-	const handleSubmit = () => {
+	const handleSubmit = (e) => {
+		e.preventDefault()
 		fetch(`https://api.github.com/users/${userInput}`)
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.message) {
-					setError(data.message)
+					setError("This user doesn't exist.")
 				} else {
+					setError(undefined)
 					setData(data)
 				}
 			})
@@ -107,7 +109,7 @@ function App() {
 									</tr>
 								</thead>
 								{error ? (
-									<p>{error}</p>
+									<p className="bg-white">{error}</p>
 								) : (
 									<tbody className="bg-white divide-y divide-gray-200">
 										<tr>
@@ -148,7 +150,7 @@ function App() {
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 												<a
-													href="mailto:{email}"
+													href={`mailto:${email}`}
 													className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
 												>
 													Contact
